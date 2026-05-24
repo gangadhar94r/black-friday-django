@@ -1,0 +1,23 @@
+{
+  "random_forest": {
+    "rmse": 2929.95,
+    "mae": 2182.77,
+    "r2": 0.6583,
+    "feature_importance": {
+      "Gender": 0.0043,
+      "Age": 0.0134,
+      "Occupation": 0.0193,
+      "City_Category": 0.0079,
+      "Stay_In_Current_City_Years": 0.0124,
+      "Marital_Status": 0.0046,
+      "Product_Category_1": 0.9054,
+      "Product_Category_2": 0.0198,
+      "Product_Category_3": 0.013
+    }
+  },
+  "linear_regression": {
+    "rmse": 4618.7,
+    "mae": 3526.59,
+    "r2": 0.151
+  }
+}

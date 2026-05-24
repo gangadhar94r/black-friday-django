@@ -1,0 +1,196 @@
+{% extends 'predictor/base.html' %}
+
+{% block title %}Analysis - Black Friday Sales Prediction{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+    <h2><i class="bi bi-graph-up-arrow text-primary"></i> Model Performance Analysis</h2>
+    <p class="text-muted">Comparison of Random Forest and Linear Regression models on the test set</p>
+</div>
+
+<!-- Random Forest Metrics -->
+<div class="card card-custom mb-4">
+    <div class="card-body p-4">
+        <h5 class="mb-3"><i class="bi bi-cpu text-success"></i> Random Forest Regressor</h5>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="border-start border-success border-4 ps-3 py-2 bg-light rounded">
+                    <small class="text-muted text-uppercase">R-Squared (R²)</small>
+                    <h3 class="mb-0">{{ metrics.random_forest.r2 }}</h3>
+                    <small class="text-success">Higher is better (max 1.0)</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="border-start border-success border-4 ps-3 py-2 bg-light rounded">
+                    <small class="text-muted text-uppercase">RMSE</small>
+                    <h3 class="mb-0">${{ metrics.random_forest.rmse }}</h3>
+                    <small class="text-success">Lower is better</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="border-start border-success border-4 ps-3 py-2 bg-light rounded">
+                    <small class="text-muted text-uppercase">MAE</small>
+                    <h3 class="mb-0">${{ metrics.random_forest.mae }}</h3>
+                    <small class="text-success">Lower is better</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Linear Regression Metrics -->
+<div class="card card-custom mb-4">
+    <div class="card-body p-4">
+        <h5 class="mb-3"><i class="bi bi-graph-up text-secondary"></i> Linear Regression</h5>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="border-start border-secondary border-4 ps-3 py-2 bg-light rounded">
+                    <small class="text-muted text-uppercase">R-Squared (R²)</small>
+                    <h3 class="mb-0">{{ metrics.linear_regression.r2 }}</h3>
+                    <small class="text-secondary">Higher is better (max 1.0)</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="border-start border-secondary border-4 ps-3 py-2 bg-light rounded">
+                    <small class="text-muted text-uppercase">RMSE</small>
+                    <h3 class="mb-0">${{ metrics.linear_regression.rmse }}</h3>
+                    <small class="text-secondary">Lower is better</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="border-start border-secondary border-4 ps-3 py-2 bg-light rounded">
+                    <small class="text-muted text-uppercase">MAE</small>
+                    <h3 class="mb-0">${{ metrics.linear_regression.mae }}</h3>
+                    <small class="text-secondary">Lower is better</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Charts Section -->
+<div class="row g-4">
+
+    <!-- R² Comparison Chart -->
+    <div class="col-md-6">
+        <div class="card card-custom">
+            <div class="card-body p-4">
+                <h5 class="mb-3">R² Score Comparison</h5>
+                <canvas id="r2Chart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- RMSE/MAE Chart -->
+    <div class="col-md-6">
+        <div class="card card-custom">
+            <div class="card-body p-4">
+                <h5 class="mb-3">Error Comparison</h5>
+                <canvas id="errorChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Importance Chart -->
+    <div class="col-12">
+        <div class="card card-custom">
+            <div class="card-body p-4">
+                <h5 class="mb-3">Feature Importance (Random Forest)</h5>
+                <p class="text-muted small">Which features most influence the prediction?</p>
+                <canvas id="featureChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Conclusion -->
+<div class="card card-custom mt-4">
+    <div class="card-body p-4">
+        <h5 class="mb-3"><i class="bi bi-check-circle text-success"></i> Conclusion</h5>
+        <p>
+            Based on the evaluation metrics, the <strong>Random Forest Regressor</strong> significantly
+            outperforms Linear Regression for this dataset. With an R² of
+            <strong>{{ metrics.random_forest.r2 }}</strong> compared to Linear Regression's
+            <strong>{{ metrics.linear_regression.r2 }}</strong>, Random Forest explains a much
+            larger proportion of the variance in purchase amounts.
+        </p>
+        <p class="mb-0">
+            The feature importance chart shows that <strong>Product Category 1</strong> is the
+            strongest predictor, followed by other product attributes. This aligns with retail
+            intuition: <em>what</em> a customer buys matters more than <em>who</em> they are.
+        </p>
+    </div>
+</div>
+
+<!-- Chart.js Library + Chart Code -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+<script>
+    // R² Comparison Chart
+    new Chart(document.getElementById('r2Chart'), {
+        type: 'bar',
+        data: {
+            labels: ['Random Forest', 'Linear Regression'],
+            datasets: [{
+                label: 'R² Score',
+                data: [{{ metrics.random_forest.r2 }}, {{ metrics.linear_regression.r2 }}],
+                backgroundColor: ['#11998e', '#6c757d'],
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, max: 1 } }
+        }
+    });
+
+    // Error Comparison Chart
+    new Chart(document.getElementById('errorChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Random Forest', 'Linear Regression'],
+            datasets: [
+                {
+                    label: 'RMSE ($)',
+                    data: [{{ metrics.random_forest.rmse }}, {{ metrics.linear_regression.rmse }}],
+                    backgroundColor: '#1a1f36',
+                    borderRadius: 6
+                },
+                {
+                    label: 'MAE ($)',
+                    data: [{{ metrics.random_forest.mae }}, {{ metrics.linear_regression.mae }}],
+                    backgroundColor: '#dc3545',
+                    borderRadius: 6
+                }
+            ]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+
+    // Feature Importance Chart
+    new Chart(document.getElementById('featureChart'), {
+        type: 'bar',
+        data: {
+            labels: [
+                {% for f, v in sorted_features %}'{{ f }}'{% if not forloop.last %},{% endif %}{% endfor %}
+            ],
+            datasets: [{
+                label: 'Importance',
+                data: [
+                    {% for f, v in sorted_features %}{{ v }}{% if not forloop.last %},{% endif %}{% endfor %}
+                ],
+                backgroundColor: '#1a1f36',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { x: { beginAtZero: true } }
+        }
+    });
+</script>
+
+{% endblock %}

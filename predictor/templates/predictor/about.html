@@ -1,0 +1,107 @@
+{% extends 'predictor/base.html' %}
+
+{% block title %}About - Black Friday Sales Prediction{% endblock %}
+
+{% block content %}
+
+<div class="card card-custom mb-4">
+    <div class="card-body p-4">
+
+        <h2 class="mb-3">
+            <i class="bi bi-info-circle text-primary"></i> About This Project
+        </h2>
+
+        <h5 class="mt-4 pb-2 border-bottom">Project Overview</h5>
+        <p>
+            This is a <strong>Black Friday Sales Prediction</strong> system that uses
+            machine learning to forecast customer purchase amounts during the annual Black
+            Friday sales event. Built as a Major Project, it implements both
+            <strong>Random Forest</strong> and <strong>Linear Regression</strong> algorithms,
+            allowing comparison between an ensemble method and a baseline approach.
+        </p>
+
+        <h5 class="mt-4 pb-2 border-bottom">Aim</h5>
+        <p>
+            To leverage data science and machine learning techniques to forecast sales trends
+            for the Black Friday event, empowering retailers with actionable insights and
+            accurate predictions that enable optimization of marketing strategies, inventory
+            management, and resource allocation.
+        </p>
+
+        <h5 class="mt-4 pb-2 border-bottom">Technology Stack</h5>
+        <div class="row g-3 mb-3">
+            <div class="col-md-6">
+                <strong><i class="bi bi-code-slash"></i> Backend</strong>
+                <ul>
+                    <li>Python 3.11</li>
+                    <li>Django 5.2 (web framework)</li>
+                    <li>Gunicorn (production WSGI server)</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <strong><i class="bi bi-cpu"></i> Machine Learning</strong>
+                <ul>
+                    <li>Scikit-learn (Random Forest, Linear Regression)</li>
+                    <li>Pandas (data processing)</li>
+                    <li>NumPy (numerical operations)</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <strong><i class="bi bi-window"></i> Frontend</strong>
+                <ul>
+                    <li>HTML5, CSS3, JavaScript</li>
+                    <li>Bootstrap 5 (responsive design)</li>
+                    <li>Chart.js (interactive visualizations)</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <strong><i class="bi bi-cloud"></i> Deployment</strong>
+                <ul>
+                    <li>Render (cloud hosting)</li>
+                    <li>WhiteNoise (static file serving)</li>
+                    <li>SQLite (database)</li>
+                </ul>
+            </div>
+        </div>
+
+        <h5 class="mt-4 pb-2 border-bottom">Dataset</h5>
+        <p>
+            The model is trained on the <strong>Black Friday Sales dataset</strong> containing
+            <strong>550,068 retail transactions</strong>. Each record includes customer demographics
+            (age, gender, occupation, marital status), location (city category, years in city),
+            product information (3 product categories), and the actual purchase amount.
+        </p>
+
+        <h5 class="mt-4 pb-2 border-bottom">Key Features</h5>
+        <ol>
+            <li><strong>Data Input Form</strong> — User-friendly form for customer and product details</li>
+            <li><strong>Real-time Prediction</strong> — Instant purchase amount prediction with spender tier</li>
+            <li><strong>Model Selection</strong> — Choose between Random Forest and Linear Regression</li>
+            <li><strong>Model Evaluation</strong> — View RMSE, MAE, and R² metrics for both models</li>
+            <li><strong>Visualization Tools</strong> — Interactive charts for model comparison and feature importance</li>
+            <li><strong>Responsive Design</strong> — Works on desktop, tablet, and mobile devices</li>
+        </ol>
+
+        <h5 class="mt-4 pb-2 border-bottom">Machine Learning Algorithms</h5>
+        <p>
+            <strong>Random Forest Regressor:</strong> An ensemble learning method that constructs
+            multiple decision trees during training and outputs the mean prediction of individual
+            trees. It handles non-linear relationships well and is robust against overfitting.
+            <em>Achieved R² = 0.65 on the test set.</em>
+        </p>
+        <p>
+            <strong>Linear Regression:</strong> A baseline linear approach that models the
+            relationship between input features and the target as a linear equation. While simpler,
+            it provides interpretable coefficients and serves as a benchmark.
+            <em>Achieved R² = 0.15 on the test set.</em>
+        </p>
+
+        <h5 class="mt-4 pb-2 border-bottom">Submitted By</h5>
+        <p class="mb-0">
+            <strong>Samatha Katkam</strong> &mdash; Major Project
+        </p>
+
+    </div>
+</div>
+
+{% endblock %}

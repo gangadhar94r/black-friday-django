@@ -1,0 +1,196 @@
+{% extends 'predictor/base.html' %}
+
+{% block title %}Predict - Black Friday Sales Prediction{% endblock %}
+
+{% block content %}
+
+{% if error %}
+<div class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-triangle"></i> {{ error }}
+</div>
+{% endif %}
+
+{% if prediction %}
+<!-- Prediction Result Box -->
+<div class="card card-custom mb-4" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white;">
+    <div class="card-body p-4 text-center">
+        <p class="mb-2 text-uppercase" style="letter-spacing: 1px; font-size: 0.85rem;">
+            Predicted Purchase Amount
+        </p>
+        <p class="display-3 fw-bold mb-2" id="resultAmount" data-target="{{ prediction.amount }}">
+            $0.00
+        </p>
+        <p class="fs-5 mb-2">{{ prediction.tier }}</p>
+        <p class="mb-0 small opacity-75">
+            <i class="bi bi-cpu"></i> Predicted using {{ prediction.model_display_name }}
+        </p>
+    </div>
+</div>
+
+<script>
+    (function() {
+        var el = document.getElementById('resultAmount');
+        var target = parseFloat(el.dataset.target);
+        var duration = 1200;
+        var start = performance.now();
+        function tick(now) {
+            var p = Math.min((now - start) / duration, 1);
+            var eased = 1 - Math.pow(1 - p, 3);
+            var value = target * eased;
+            el.textContent = '$' + value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            if (p < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+    })();
+</script>
+{% endif %}
+<div class="card card-custom mb-4">
+    <div class="card-body p-4">
+
+        <h2 class="mb-1">
+            <i class="bi bi-cart-check text-primary"></i> Sales Prediction Form
+        </h2>
+        <p class="text-muted mb-4">Enter customer and product details to predict Black Friday purchase amount</p>
+
+        <form method="POST" action="">
+            {% csrf_token %}
+
+            <!-- Section 1: Customer Information -->
+            <h5 class="mt-3 pb-2 border-bottom"><i class="bi bi-person"></i> Customer Information</h5>
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <label class="form-label">User ID</label>
+                    <input type="text" class="form-control" name="User_ID" value="{{ form_data.User_ID|default:'1000001' }}">
+                    <small class="text-muted">For reference only</small>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Gender</label>
+                    <select class="form-select" name="Gender">
+                        <option value="M" {% if form_data.Gender == 'M' or not form_data.Gender %}selected{% endif %}>Male</option>
+                        <option value="F" {% if form_data.Gender == 'F' %}selected{% endif %}>Female</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Age Range</label>
+                    <select class="form-select" name="Age">
+                        <option value="0-17" {% if form_data.Age == '0-17' %}selected{% endif %}>0-17</option>
+                        <option value="18-25" {% if form_data.Age == '18-25' %}selected{% endif %}>18-25</option>
+                        <option value="26-35" {% if form_data.Age == '26-35' or not form_data.Age %}selected{% endif %}>26-35</option>
+                        <option value="36-45" {% if form_data.Age == '36-45' %}selected{% endif %}>36-45</option>
+                        <option value="46-50" {% if form_data.Age == '46-50' %}selected{% endif %}>46-50</option>
+                        <option value="51-55" {% if form_data.Age == '51-55' %}selected{% endif %}>51-55</option>
+                        <option value="55+" {% if form_data.Age == '55+' %}selected{% endif %}>55+</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Occupation Code</label>
+                    <select class="form-select" name="Occupation">
+                        {% for i in occupation_range %}
+                            <option value="{{ i }}" {% if form_data.Occupation == i|stringformat:"s" or not form_data.Occupation and i == 10 %}selected{% endif %}>{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Marital Status</label>
+                    <select class="form-select" name="Marital_Status">
+                        <option value="0" {% if form_data.Marital_Status == '0' or not form_data.Marital_Status %}selected{% endif %}>Single</option>
+                        <option value="1" {% if form_data.Marital_Status == '1' %}selected{% endif %}>Married</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Section 2: Location -->
+            <h5 class="mt-3 pb-2 border-bottom"><i class="bi bi-geo-alt"></i> Location</h5>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label class="form-label">City Category</label>
+                    <select class="form-select" name="City_Category">
+                        <option value="A" {% if form_data.City_Category == 'A' or not form_data.City_Category %}selected{% endif %}>A (Tier 1 City)</option>
+                        <option value="B" {% if form_data.City_Category == 'B' %}selected{% endif %}>B (Tier 2 City)</option>
+                        <option value="C" {% if form_data.City_Category == 'C' %}selected{% endif %}>C (Tier 3 City)</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Years in Current City</label>
+                    <select class="form-select" name="Stay_In_Current_City_Years">
+                        <option value="0" {% if form_data.Stay_In_Current_City_Years == '0' %}selected{% endif %}>0 (New resident)</option>
+                        <option value="1" {% if form_data.Stay_In_Current_City_Years == '1' %}selected{% endif %}>1 year</option>
+                        <option value="2" {% if form_data.Stay_In_Current_City_Years == '2' or not form_data.Stay_In_Current_City_Years %}selected{% endif %}>2 years</option>
+                        <option value="3" {% if form_data.Stay_In_Current_City_Years == '3' %}selected{% endif %}>3 years</option>
+                        <option value="4+" {% if form_data.Stay_In_Current_City_Years == '4+' %}selected{% endif %}>4+ years</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Section 3: Product -->
+            <h5 class="mt-3 pb-2 border-bottom"><i class="bi bi-box-seam"></i> Product Information</h5>
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <label class="form-label">Product ID</label>
+                    <input type="text" class="form-control" name="Product_ID" value="{{ form_data.Product_ID|default:'P00069042' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Product Category 1</label>
+                    <select class="form-select" name="Product_Category_1">
+                        {% for i in product_cat_range %}
+                            <option value="{{ i }}" {% if form_data.Product_Category_1 == i|stringformat:"s" or not form_data.Product_Category_1 and i == 3 %}selected{% endif %}>{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Product Category 2</label>
+                    <select class="form-select" name="Product_Category_2">
+                        <option value="0" {% if form_data.Product_Category_2 == '0' %}selected{% endif %}>None</option>
+                        {% for i in product_cat_range %}
+                            <option value="{{ i }}" {% if form_data.Product_Category_2 == i|stringformat:"s" or not form_data.Product_Category_2 and i == 4 %}selected{% endif %}>{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Product Category 3</label>
+                    <select class="form-select" name="Product_Category_3">
+                        <option value="0" {% if form_data.Product_Category_3 == '0' %}selected{% endif %}>None</option>
+                        {% for i in product_cat_range %}
+                            <option value="{{ i }}" {% if form_data.Product_Category_3 == i|stringformat:"s" or not form_data.Product_Category_3 and i == 12 %}selected{% endif %}>{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Section 4: Model Selection -->
+            <h5 class="mt-3 pb-2 border-bottom"><i class="bi bi-cpu"></i> Choose Prediction Model</h5>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <div class="form-check border rounded p-3 h-100">
+                        <input class="form-check-input" type="radio" name="model_choice" id="rf" value="random_forest"
+                               {% if form_data.model_choice == 'random_forest' or not form_data.model_choice %}checked{% endif %}>
+                        <label class="form-check-label w-100" for="rf">
+                            <strong>Random Forest Regressor</strong><br>
+                            <small class="text-muted">Ensemble of 50 decision trees. Higher accuracy.</small>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check border rounded p-3 h-100">
+                        <input class="form-check-input" type="radio" name="model_choice" id="lr" value="linear_regression"
+                               {% if form_data.model_choice == 'linear_regression' %}checked{% endif %}>
+                        <label class="form-check-label w-100" for="lr">
+                            <strong>Linear Regression</strong><br>
+                            <small class="text-muted">Baseline model. Simple and interpretable.</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="bi bi-lightning-charge"></i> Predict Purchase Amount
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}

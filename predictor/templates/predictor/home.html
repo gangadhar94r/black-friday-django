@@ -1,0 +1,56 @@
+{% extends 'predictor/base.html' %}
+
+{% block title %}Home - Black Friday Sales Prediction{% endblock %}
+
+{% block content %}
+
+<div class="card card-custom mb-4">
+    <div class="card-body p-4">
+        <h1 class="mb-3">
+            <i class="bi bi-cart-check text-primary"></i>
+            Black Friday Sales Predictor
+        </h1>
+        <h5 class="text-muted mb-4">Welcome to the prediction tool!</h5>
+
+        <p class="lead">
+            This web application predicts how much a customer will spend on Black Friday
+            based on their profile and product information.
+        </p>
+
+        <p>
+            It uses two machine learning models — <strong>Random Forest Regressor</strong>
+            and <strong>Linear Regression</strong> — trained on
+            <strong>550,068 retail transactions</strong> from a real-world dataset.
+        </p>
+
+        <div class="row mt-4 g-3">
+            <div class="col-md-4">
+                <div class="border rounded p-3 text-center bg-light">
+                    <i class="bi bi-database fs-1 text-primary"></i>
+                    <h5 class="mt-2">550K+</h5>
+                    <small class="text-muted">Training Records</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="border rounded p-3 text-center bg-light">
+                    <i class="bi bi-cpu fs-1 text-success"></i>
+                    <h5 class="mt-2">2 Models</h5>
+                    <small class="text-muted">RF + Linear Regression</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="border rounded p-3 text-center bg-light">
+                    <i class="bi bi-graph-up-arrow fs-1 text-warning"></i>
+                    <h5 class="mt-2">R² = 0.65</h5>
+                    <small class="text-muted">Random Forest Accuracy</small>
+                </div>
+            </div>
+        </div>
+
+        <p class="mt-4 mb-0 text-center">
+            <em>Built with Django, scikit-learn, and Bootstrap 5</em>
+        </p>
+    </div>
+</div>
+
+{% endblock %}
